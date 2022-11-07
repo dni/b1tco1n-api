@@ -1,0 +1,23 @@
+uvicorn:
+  host: "0.0.0.0"
+  port: 8000
+webhook:
+  url: "https://api.b1tco1n.org"
+  secret: "XXXXXXXXXXXXXXXXXXXXX"
+lnbits:
+  url: "https://lnbits.b1tco1n.org"
+  api_key: "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+  admin_key: "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+  price: 70
+db:
+  secret: "XXXXXXXXXXXXXXXXXX"
+  url: "sqlite:///./webapp.db"
+log:
+  level: "DEBUG"
+  format: "[%(asctime)s] [%(levelname)s] [%(name)s]: %(message)s"
+saas:
+  sleep_time: 90
+  destroy_time: 1296000
+cors:
+  - "https://wallet.b1tco1n.org"
+  - "http://localhost:3000"
