@@ -114,11 +114,11 @@ class LnbitsService:
 
     def create_user_and_wallet(self, username) -> Tuple:
         api_key = self._config['lnbits']['api_key']
-        admin_key = self._config['lnbits']['admin_key']
+        admin_id = self._config['lnbits']['admin_id']
         json = self.request("/usermanager/api/v1/users", api_key=api_key, payload={
           "user_name": username,
           "wallet_name": username,
-          "admin_id": admin_key,
+          "admin_id": admin_id,
         })
         wallet = json['wallets'][0]
         return wallet["user"], wallet["id"], wallet["adminkey"]

@@ -7,7 +7,7 @@ webhook:
 lnbits:
   url: "https://lnbits.b1tco1n.org"
   api_key: "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
-  admin_key: "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+  admin_id: "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
   price: 70
 db:
   secret: "XXXXXXXXXXXXXXXXXX"
