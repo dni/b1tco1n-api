@@ -6,6 +6,7 @@ from dependency_injector import containers, providers
 
 from .database import Database
 from .repositories import InstanceRepository, UserRepository
+
 from .services.user import UserService
 from .services.login import LoginService
 from .services.lnbits import LnbitsService
@@ -15,7 +16,13 @@ from .services.instance import InstanceService
 
 class Container(containers.DeclarativeContainer):
 
-    wiring_config = containers.WiringConfiguration(modules=[".endpoints"])
+    wiring_config = containers.WiringConfiguration(modules=[
+        ".endpoints.login",
+        ".endpoints.status",
+        ".endpoints.webhook",
+        ".endpoints.websocket",
+        ".endpoints.instance",
+    ])
 
     config = providers.Configuration(yaml_files=["config.yml"])
 

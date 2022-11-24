@@ -3,7 +3,7 @@ import asyncio
 from enum import Enum, auto
 from abc import ABC, abstractmethod
 
-from fastapi import WebSocket
+from fastapi import WebSocket, WebSocketDisconnect
 
 from webapp.models import User
 from webapp.services.lnbits import LnbitsService
@@ -186,13 +186,19 @@ class WebSocketService():
         task_send = asyncio.create_task(self.get_data_and_send(websocket))
         self.tasks.append(task_read)
         self.tasks.append(task_send)
+        task = asyncio.gather(task_read, task_send)
         try:
-            await asyncio.gather(task_read, task_send)
-        except asyncio.exceptions.CancelledError:
-            """ catch error after force quitting """
-            await self.cancel_listener()
+            await task
+        except:
+            raise
+        finally:
+            task.cancel()
+
+        return task
+
 
     async def cancel_listener(self):
+        print("cancels websocket")
         for task in self.tasks:
             task.cancel()
 
