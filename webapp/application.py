@@ -7,8 +7,6 @@ from .endpoints import (
         login,
         websocket,
         status,
-        webhook,
-        instance,
 )
 
 from .containers import Container
@@ -19,10 +17,8 @@ def include_routes(app, login_manager):
     app.include_router(status.status_router)
     # websocket auth
     app.include_router(websocket.websocket_router)
-    # get vars auth for webhooks
-    app.include_router(webhook.webhook_router)
     # private
-    app.include_router(instance.instance_router, dependencies=[Depends(login_manager)])
+    # app.include_router(private.private_router, dependencies=[Depends(login_manager)])
 
 
 def create_app() -> FastAPI:

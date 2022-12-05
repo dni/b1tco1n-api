@@ -5,23 +5,20 @@
 from dependency_injector import containers, providers
 
 from .database import Database
-from .repositories import InstanceRepository, UserRepository
+from .repositories import UserRepository
 
 from .services.user import UserService
 from .services.login import LoginService
 from .services.lnbits import LnbitsService
 from .services.websocket import WebSocketService
 from .services.sse import SSEService
-from .services.instance import InstanceService
 
 class Container(containers.DeclarativeContainer):
 
     wiring_config = containers.WiringConfiguration(modules=[
         ".endpoints.login",
         ".endpoints.status",
-        ".endpoints.webhook",
         ".endpoints.websocket",
-        ".endpoints.instance",
     ])
 
     config = providers.Configuration(yaml_files=["config.yml"])
@@ -49,16 +46,6 @@ class Container(containers.DeclarativeContainer):
         UserService,
         user_repository=user_repository,
         lnbits_service=lnbits_service,
-    )
-
-    instance_repository = providers.Factory(
-        InstanceRepository,
-        session_factory=db.provided.session,
-    )
-
-    instance_service = providers.Factory(
-        InstanceService,
-        instance_repository=instance_repository,
     )
 
     login_service = providers.Factory(

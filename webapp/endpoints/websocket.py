@@ -22,7 +22,7 @@ async def websocket_endpoint(
     websocket_service: WebSocketService = Depends(Provide[Container.websocket_service]),
     login_service: LoginService = Depends(Provide[Container.login_service]),
     sse_service: SSEService = Depends(Provide[Container.sse_service]),
-    config=Depends(Provide[Container.config]),
+    url=Depends(Provide[Container.config.lnbits.url]),
 ):
     if not access_token:
         return await websocket.close()
@@ -33,7 +33,7 @@ async def websocket_endpoint(
     except:
         return await websocket.close()
 
-    sse_url = f"{config['lnbits']['url']}/api/v1/payments/sse?api-key={user.api_key}"
+    sse_url = f"{url}/api/v1/payments/sse?api-key={user.api_key}"
     await websocket.accept()
     try:
         tasks = await asyncio.gather(
@@ -53,5 +53,6 @@ async def websocket_endpoint(
         print("canceled error")
         await websocket_service.cancel_listener()
         sse_service.cancel_listener()
-    except:
+    except Exception as exc:
+        print(str(exc))
         print("unhandled exception")

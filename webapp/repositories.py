@@ -1,58 +1,11 @@
 """Repositories module."""
 
 from contextlib import AbstractContextManager
-from typing import Callable, Iterator, List
+from typing import Callable, List
 
-from sqlalchemy.orm import Session, load_only, undefer
+from sqlalchemy.orm import Session
 
-from .models import Instance, User
-
-
-class InstanceRepository:
-    def __init__(
-        self, session_factory: Callable[..., AbstractContextManager[Session]]
-    ) -> None:
-        self.session_factory = session_factory
-
-    def get_by_id(self, instance_id: int) -> Instance:
-        with self.session_factory() as session:
-            instance = (
-                session.query(Instance).filter(Instance.id == instance_id).first()
-            )
-            if not instance:
-                raise InstanceNotFoundError(instance_id)
-            return instance
-
-    def get_by_user_id(self, user_id: int) -> list[Instance]:
-        with self.session_factory() as session:
-            return session.query(Instance).filter(Instance.user_id == user_id).all()
-
-    def add(self, instance: Instance) -> Instance:
-        with self.session_factory() as session:
-            session.add(instance)
-            session.commit()
-            session.refresh(instance)
-            return instance
-
-    def update(self, instance_id: int, data: dict) -> Instance:
-        with self.session_factory() as session:
-            instance = session.query(Instance).filter(Instance.id == instance_id).first()
-            if not instance:
-                raise InstanceNotFoundError(instance_id)
-            for key, value in data.items():
-                if hasattr(instance, key):
-                    setattr(instance, key, value)
-            session.commit()
-            session.refresh(instance)
-            return instance
-
-    def delete_by_id(self, instance_id: int) -> None:
-        with self.session_factory() as session:
-            entity = session.query(Instance).filter(Instance.id == instance_id).first()
-            if not entity:
-                raise InstanceNotFoundError(instance_id)
-            session.delete(entity)
-            session.commit()
+from .models import User
 
 
 class UserRepository:
@@ -119,7 +72,3 @@ class NotFoundError(Exception):
 
 class UserNotFoundError(NotFoundError):
     entity_name: str = "User"
-
-
-class InstanceNotFoundError(NotFoundError):
-    entity_name: str = "Instance"

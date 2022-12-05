@@ -21,6 +21,10 @@ class LnbitsService:
             fn = getattr(requests, method)
             try:
                 response = fn(url, headers=headers, json=payload)
+                response.raise_for_status()
+                json = response.json()
+                return json
+
             except Exception as exc:
                 msg = f"ERROR: making lnbits request. {exc}"
                 logger.error(msg)
@@ -30,13 +34,6 @@ class LnbitsService:
             msg = f"ERROR: trying to make a weird request. {method}"
             logger.error(msg)
             raise Exception(msg)
-
-        json = response.json()
-        if response.status_code > 300:
-            msg = f"ERROR: {json['detail']}"
-            logger.error(msg)
-            raise Exception(msg)
-        return json
 
     def create_invoice(self, api_key: str, amount: int, description: str = "withdraw"):
         data = self.request("/api/v1/payments", api_key=api_key, method="post", payload={
@@ -172,21 +169,4 @@ class LnbitsService:
             "webhook_url": f"{webhook}/payment?api_key={webhook_secret}&username={username}",
             "success_text": f"thank you! {username}",
         })
-        return json["lnurl"]
-
-# TODO: add websocket listener and forward
-# /api/v1/payments/sse?api-key=c80bda73f47f4539ad2514d9b409c1da
-
-    def create_lnurlp(self, instance_id) -> str:
-        price = self._config.lnbits.price()
-        webhook = self._config.webhook.url()
-        webhook_secret = self._config.webhook.secret()
-        json = self.request("/lnurlp/api/v1/links", payload={
-            "description": f"top up for instance: {instance_id}",
-            "min": price,
-            "max": price * 10,
-            "comment_chars": 0,
-            "webhook_url": f"{webhook}/payment?api_key={webhook_secret}&instance_id={instance_id}",
-            "success_text": "instance stop date extended, if it is your first payment, it will take 45-60 seconds until the admin url will be visible!",
-        }, api_key=self._config.lnbits.api_key)
         return json["lnurl"]
